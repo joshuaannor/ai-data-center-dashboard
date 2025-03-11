@@ -10,27 +10,37 @@ function fetchMetrics() {
         .catch(error => console.error("Error loading metrics:", error));
 }
 
-function displayMetrics(data) {
-    document.getElementById("metrics-data").textContent = JSON.stringify(data, null, 2);
+function displayMetrics(metrics) {
+    let metricsDisplay = document.getElementById("metrics-display");
+    metricsDisplay.innerHTML = ""; // Clear previous data
+
+    for (let server in metrics) {
+        let serverData = metrics[server];
+        let serverHTML = `
+            <div class="server-box">
+                <h3>🔧 ${server}</h3>
+                <p>CPU Usage: ${serverData.cpu_usage}%</p>
+                <p>Memory Usage: ${serverData.memory_usage}%</p>
+                <p>Disk Usage: ${serverData.disk_usage}%</p>
+            </div>
+        `;
+        metricsDisplay.innerHTML += serverHTML;
+    }
 }
 
-function updateDashboard() {
-    const server = document.getElementById("server").value;
-    const cpu = document.getElementById("cpu").value;
-    const memory = document.getElementById("memory").value;
-    const disk = document.getElementById("disk").value;
 
-    if (!cpu || !memory || !disk) {
-        alert("Please enter values for CPU, Memory, and Disk Usage.");
-        return;
+function updateDashboard(metrics) {
+    let dashboard = document.getElementById("metrics-display");
+    dashboard.innerHTML = "";  // Clear previous data
+
+    for (let server in metrics) {
+        let serverDiv = document.createElement("div");
+        serverDiv.innerHTML = `
+            <h3>${server}</h3>
+            <p>CPU Usage: ${metrics[server].cpu_usage}%</p>
+            <p>Memory Usage: ${metrics[server].memory_usage}%</p>
+            <p>Disk Usage: ${metrics[server].disk_usage}%</p>
+        `;
+        dashboard.appendChild(serverDiv);
     }
-
-    let updatedMetrics = { ...window.originalMetrics };  // Clone original data
-    updatedMetrics[server] = {
-        "cpu_usage": parseInt(cpu),
-        "memory_usage": parseInt(memory),
-        "disk_usage": parseInt(disk)
-    };
-
-    displayMetrics(updatedMetrics);  // Update UI but not the actual file
 }
