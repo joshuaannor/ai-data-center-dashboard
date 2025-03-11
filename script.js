@@ -16,55 +16,49 @@ function displayMetrics(metrics) {
 
     for (let server in metrics) {
         let serverData = metrics[server];
-
-        let alertClass = getAlertClass(serverData); // Get color based on thresholds
-        let alertIcon = getAlertIcon(serverData);  // Get alert icon if critical
+        let alertClass = getAlertClass(serverData.cpu_usage, serverData.memory_usage, serverData.disk_usage);
 
         let serverHTML = `
             <div class="server-box ${alertClass}">
-                <h3>${alertIcon} ${server}</h3>
+                <h3>🔧 ${server}</h3>
                 <p>CPU Usage: ${serverData.cpu_usage}%</p>
                 <p>Memory Usage: ${serverData.memory_usage}%</p>
                 <p>Disk Usage: ${serverData.disk_usage}%</p>
             </div>
         `;
-
         metricsDisplay.innerHTML += serverHTML;
     }
 }
 
-function updateDashboard() {
-    let server = document.getElementById("server-select").value;
-    let cpu = document.getElementById("cpu").value;
-    let memory = document.getElementById("memory").value;
-    let disk = document.getElementById("disk").value;
-
-    let updatedMetrics = JSON.parse(JSON.stringify(window.originalMetrics)); // Clone original data
-    updatedMetrics[server] = {
-        "cpu_usage": parseInt(cpu),
-        "memory_usage": parseInt(memory),
-        "disk_usage": parseInt(disk)
-    };
-
-    displayMetrics(updatedMetrics);
-}
-
-// Function to determine alert class
-function getAlertClass(data) {
-    if (data.cpu_usage > 90 || data.memory_usage > 85 || data.disk_usage > 80) {
-        return "critical";
-    } else if (data.cpu_usage > 75 || data.memory_usage > 70 || data.disk_usage > 60) {
-        return "warning";
+// Function to determine the alert class based on thresholds
+function getAlertClass(cpu, memory, disk) {
+    if (cpu > 90 || memory > 90 || disk > 90) {
+        return "alert-critical";  // Red background
+    } else if (cpu > 70 || memory > 70 || disk > 70) {
+        return "alert-warning";  // Yellow background
     }
     return "";
 }
 
-// Function to determine alert icons
-function getAlertIcon(data) {
-    if (data.cpu_usage > 90 || data.memory_usage > 85 || data.disk_usage > 80) {
-        return "⚠️";  // High alert
-    } else if (data.cpu_usage > 75 || data.memory_usage > 70 || data.disk_usage > 60) {
-        return "🔶";  // Medium alert
+// Function to handle user input and add a new server
+function updateDashboard() {
+    let serverSelect = document.getElementById("server-select").value;
+    let cpuUsage = parseInt(document.getElementById("cpu").value);
+    let memoryUsage = parseInt(document.getElementById("memory").value);
+    let diskUsage = parseInt(document.getElementById("disk").value);
+
+    if (!window.originalMetrics) {
+        console.error("Original metrics not loaded yet.");
+        return;
     }
-    return "🔧";  // Normal status
+
+    // Update the selected server with user-provided values
+    window.originalMetrics[serverSelect] = {
+        cpu_usage: cpuUsage,
+        memory_usage: memoryUsage,
+        disk_usage: diskUsage
+    };
+
+    // Re-display updated metrics
+    displayMetrics(window.originalMetrics);
 }
