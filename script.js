@@ -17,10 +17,11 @@ function displayMetrics(metrics) {
     for (let server in metrics) {
         let serverData = metrics[server];
         let alertClass = getAlertClass(serverData.cpu_usage, serverData.memory_usage, serverData.disk_usage);
+        let blinkClass = alertClass === "alert-critical" ? "blinking" : "";
 
         let serverHTML = `
-            <div class="server-box ${alertClass}">
-                <h3>🔧 ${server}</h3>
+            <div class="server-box ${alertClass} ${blinkClass}">
+                <h3>⚙️ ${server}</h3>
                 <p>CPU Usage: ${serverData.cpu_usage}%</p>
                 <p>Memory Usage: ${serverData.memory_usage}%</p>
                 <p>Disk Usage: ${serverData.disk_usage}%</p>
@@ -33,22 +34,27 @@ function displayMetrics(metrics) {
 // Function to determine the alert class based on thresholds
 function getAlertClass(cpu, memory, disk) {
     if (cpu > 90 || memory > 90 || disk > 90) {
-        return "alert-critical";  // Red background
+        return "alert-critical";  // Red background with blinking effect
     } else if (cpu > 70 || memory > 70 || disk > 70) {
         return "alert-warning";  // Yellow background
     }
     return "";
 }
 
-// Function to handle user input and add a new server
+// Function to update metrics when user inputs data
 function updateDashboard() {
-    let serverSelect = document.getElementById("server-select").value;
+    let serverSelect = document.getElementById("server").value;
     let cpuUsage = parseInt(document.getElementById("cpu").value);
     let memoryUsage = parseInt(document.getElementById("memory").value);
     let diskUsage = parseInt(document.getElementById("disk").value);
 
     if (!window.originalMetrics) {
         console.error("Original metrics not loaded yet.");
+        return;
+    }
+
+    if (isNaN(cpuUsage) || isNaN(memoryUsage) || isNaN(diskUsage)) {
+        alert("Please enter valid numbers for CPU, Memory, and Disk usage.");
         return;
     }
 
