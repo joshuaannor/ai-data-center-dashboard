@@ -1,17 +1,36 @@
-async function fetchMetrics() {
-    const response = await fetch('https://musical-computing-machine-745pgxwjrjj2r479-5000.app.github.dev/metrics');
-    const data = await response.json();
-    const metricsDiv = document.getElementById('metrics');
+document.addEventListener("DOMContentLoaded", fetchMetrics);
 
-    metricsDiv.innerHTML = "";
-    for (let server in data) {
-        let html = `<h3>📌 ${server}</h3>`;
-        html += `<p>CPU Usage: ${data[server].cpu_usage}%</p>`;
-        html += `<p>Memory Usage: ${data[server].memory_usage}%</p>`;
-        html += `<p>Disk Usage: ${data[server].disk_usage}%</p>`;
-        metricsDiv.innerHTML += html;
-    }
+function fetchMetrics() {
+    fetch("https://raw.githubusercontent.com/joshuaannor/ai-data-center-dashboard/main/web/sample_metrics.json")
+        .then(response => response.json())
+        .then(data => {
+            window.originalMetrics = data;  // Store original data
+            displayMetrics(data);
+        })
+        .catch(error => console.error("Error loading metrics:", error));
 }
 
-setInterval(fetchMetrics, 3000);
-fetchMetrics();
+function displayMetrics(data) {
+    document.getElementById("metrics-data").textContent = JSON.stringify(data, null, 2);
+}
+
+function updateDashboard() {
+    const server = document.getElementById("server").value;
+    const cpu = document.getElementById("cpu").value;
+    const memory = document.getElementById("memory").value;
+    const disk = document.getElementById("disk").value;
+
+    if (!cpu || !memory || !disk) {
+        alert("Please enter values for CPU, Memory, and Disk Usage.");
+        return;
+    }
+
+    let updatedMetrics = { ...window.originalMetrics };  // Clone original data
+    updatedMetrics[server] = {
+        "cpu_usage": parseInt(cpu),
+        "memory_usage": parseInt(memory),
+        "disk_usage": parseInt(disk)
+    };
+
+    displayMetrics(updatedMetrics);  // Update UI but not the actual file
+}

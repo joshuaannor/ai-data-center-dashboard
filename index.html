@@ -3,12 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Data Center Monitoring</title>
+    <title>AI Data Center Monitoring Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>🔍 AI Data Center Monitoring Dashboard</h1>
-    <div id="metrics"></div>
+
+    <!-- User Input Form -->
+    <div id="user-input">
+        <h3>Test Your Own Data</h3>
+        <label for="server">Select Server:</label>
+        <select id="server">
+            <option value="server_1">Server 1</option>
+            <option value="server_2">Server 2</option>
+            <option value="server_3">Server 3</option>
+        </select>
+
+        <label for="cpu">CPU Usage (%):</label>
+        <input type="number" id="cpu" min="0" max="100" placeholder="e.g. 75">
+
+        <label for="memory">Memory Usage (%):</label>
+        <input type="number" id="memory" min="0" max="100" placeholder="e.g. 60">
+
+        <label for="disk">Disk Usage (%):</label>
+        <input type="number" id="disk" min="0" max="100" placeholder="e.g. 50">
+
+        <button onclick="updateDashboard()">Submit</button>
+    </div>
+
+    <div id="metrics">
+        <h3>Live Server Metrics</h3>
+        <pre id="metrics-data"></pre>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
