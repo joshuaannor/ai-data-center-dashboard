@@ -22,9 +22,36 @@ function displayMetrics(metrics) {
         let serverHTML = `
             <div class="server-box ${alertClass} ${blinkClass}">
                 <h3>⚙️ ${server}</h3>
-                <p>CPU Usage: ${serverData.cpu_usage}%</p>
-                <p>Memory Usage: ${serverData.memory_usage}%</p>
-                <p>Disk Usage: ${serverData.disk_usage}%</p>
+                <div class="metric">
+                    <label>CPU Usage</label>
+                    <div class="circular-progress">
+                        <svg>
+                            <circle class="bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="progress" cx="50" cy="50" r="45" style="stroke-dasharray: 283; stroke-dashoffset: ${283 - (283 * serverData.cpu_usage / 100)};"></circle>
+                        </svg>
+                        <div class="percentage">${serverData.cpu_usage}%</div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <label>Memory Usage</label>
+                    <div class="circular-progress">
+                        <svg>
+                            <circle class="bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="progress" cx="50" cy="50" r="45" style="stroke-dasharray: 283; stroke-dashoffset: ${283 - (283 * serverData.memory_usage / 100)};"></circle>
+                        </svg>
+                        <div class="percentage">${serverData.memory_usage}%</div>
+                    </div>
+                </div>
+                <div class="metric">
+                    <label>Disk Usage</label>
+                    <div class="circular-progress">
+                        <svg>
+                            <circle class="bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="progress" cx="50" cy="50" r="45" style="stroke-dasharray: 283; stroke-dashoffset: ${283 - (283 * serverData.disk_usage / 100)};"></circle>
+                        </svg>
+                        <div class="percentage">${serverData.disk_usage}%</div>
+                    </div>
+                </div>
             </div>
         `;
         metricsDisplay.innerHTML += serverHTML;
